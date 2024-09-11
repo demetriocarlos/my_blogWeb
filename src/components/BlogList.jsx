@@ -25,11 +25,12 @@ export const BlogList = () => {
         return <div>No hay blogs disponibles</div>;
     }
   
-
+ 
     // Ordenar los comentarios por  created_at en orden descendente (más reciente primero)
     const sortedBlog = blogs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at
     ));
  
+  
   return (
     <div>
         <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
@@ -42,14 +43,12 @@ export const BlogList = () => {
                     <div className=" mx-auto bg-white shadow-md   transition-all duration-300 ease-in-out hover:shadow-lg cursor-pointer ">
                         <UserLink
                           createdBy={
-                            blog.user.map((user) => (
-                              <div key={user.id}>
-                                {user.username}
-                              </div>
-                            ))
+                            blog.user.username
+                             
                           }
-                          createdById={blog.user.map(user => user.id  )}
+                          createdById={ blog.user.id  }
                         />
+                        
                     </div>
                     <Link to={`/blogs/${blog.id}`} className="block">
                         <BlogPost

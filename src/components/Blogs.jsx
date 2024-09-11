@@ -61,13 +61,10 @@ const togleLikes = (id) => {
             <div className=" mx-auto bg-white shadow-md   transition-all duration-300 ease-in-out hover:shadow-lg cursor-pointer ">
                     <UserLink
                     createdBy={
-                      blog.user.map((user) => (
-                        <div key={user.id}>
-                            {user.username}
-                        </div>
-                      ))
+                      blog.user.username
+                       
                     }
-                    createdById={blog.user.map(user => user.id  )}
+                    createdById={blog.user.id}
                   />
               </div>
 
