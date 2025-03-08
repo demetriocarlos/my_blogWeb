@@ -85,7 +85,7 @@ export  function BlogPost({ id, title, author, url, date,likes,userLikes=[], tog
                 }`}
               >
                 <Heart className={`w-5 h-5 ${hasLiked ? 'fill-current' : ''}`} />
-                <span>{likes}</span>
+                <span>{userLikes.length}</span>
               </button>
             )}
           </div>

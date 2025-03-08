@@ -14,7 +14,7 @@ export function Spinner({ size = 'medium', color = 'text-indigo-600' }) {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className=" text-center">
  
-        
+          
             <div className="flex justify-center items-center">
                 <div className={`  ${sizeClasses[size]} ${color} animate-spin`} role="status">
                     <svg

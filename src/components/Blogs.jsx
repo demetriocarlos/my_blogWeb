@@ -1,5 +1,5 @@
 
-import { useBlogs } from "../hooks/useBlogs"
+ 
 import { useParams } from "react-router-dom"
 import { useUpdateLikes } from "../hooks/useBlogs"
 import { useAuth } from "../hooks/useAuth"
@@ -7,24 +7,28 @@ import { BlogComment } from "./BlogComment"
 import { BlogPost } from "./Styles/BlogPost"
 import { relativeTime } from "../hooks/useBlogs"
 import { UserLink } from "./Styles/UserLink"
+import { useGetBlogId } from "../hooks/useBlogs"
+import { Spinner } from "./Styles/Spinner"
  
 export const Blogs = () => {
     const id = useParams().id
-    const {data: blogs, isLoading, error} = useBlogs()
+    //obtener el blog por id
+    const {data : blog, isLoading, error} = useGetBlogId(id)
     const { state: authState } = useAuth();// Obtener el estado de autenticación usando el hook personalizado
     const updateBlogMutation= useUpdateLikes()
   
+    
     if(isLoading){
-        return <div>Cargando blogs...</div>  // Mostrar un mensaje de carga
+        return <div><Spinner/></div>  // Mostrar un mensaje de carga
     }
         
 
     if (error) return <div>Error al cargar blogs: {error.message}</div>; // Mostrar un mensaje de error
 
-    const blog = blogs.find((blog) => blog.id === id);
+    //const blog = blogs.find((blog) => blog.id === id);
 
 
-    if (!blogs) {
+    if (!blog) {
         return <div>Blog no encontrado</div>;
     }
     
@@ -33,22 +37,8 @@ export const Blogs = () => {
 
     
 const togleLikes = (id) => {
-  const blogToChange = blogs.find((blog) => blog.id === id);// Encontrar el blog que se va a cambiar
    
-  const userLikes = blogToChange.userLikes || []; // Obtener la lista de likes del 
-  
-  const userId = authState.id; // Obtener el ID del usuario autenticado
-  const hasLiked = userLikes.includes(userId); // Verificar si el usuario ya ha dado like
-
-  const changedBlog = {
-    ...blogToChange,
-    likes: hasLiked ? blogToChange.likes - 1 : blogToChange.likes + 1, // Si ya ha dado "like", disminuir el conteo, de lo contrario, aumentarlo
-    userLikes: hasLiked
-      ? userLikes.filter((uid) => uid !== userId) // Si ya ha dado "like", eliminar al usuario de la lista
-      : userLikes.concat(userId), // Si no ha dado "like", añadir al usuario a la lista
-  };
-
-  updateBlogMutation.mutate(id, changedBlog); // Ejecutar la mutación con los datos del blog cambiado
+  updateBlogMutation.mutate({id:id, userLikes:authState.id}); // Ejecutar la mutación con los datos del blog cambiado
 }
    
 

@@ -27,6 +27,18 @@ export const useBlogs = () => {
   };
 
 
+export  const useGetBlogId = (id) => {
+    return useQuery ({
+      queryKey :['blogs', id],
+      queryFn : ()  => blogServices.getBlogId(id),
+      enabled : !! id ,//solo ejecutar si el id es valido
+      onError:(error) => {
+        console.error('Error al cargar el blog por id', error)
+      } 
+    })
+  }
+
+
 //// Hook personalizado para agregar un nuevo blog
 export const useAddBlog = () => {
     const queryClient = useQueryClient()// Obtener el cliente de consultas de React Query
@@ -72,25 +84,25 @@ export const useUpdateLikes= () => {
      
     const { dispatch: notificationDispatch } = useNotification()
     const updateBlogMutation= useMutation({
-        mutationFn:blogServices.update, // Función que realiza la actualización del blog
+        mutationFn: ({ id, userLikes }) => blogServices.update(id, { userLikes }), // Función que realiza la actualización del blog
         onSuccess: (updatedBlog) =>{
     
-            //queryClient.invalidateQueries(['blogs']) // Invalidar y refetch las consultas relacionadas
-    
-
-            // Obtener los blogs actuales desde el cache
-            const blogs = queryClient.getQueryData(["blogs"]);
-      
-            // Actualizar localmente el cache
-              queryClient.setQueryData(["blogs"], 
-                blogs.map(blog => blog.id === updatedBlog.id ? updatedBlog : blog)
-              );
            
+              queryClient.setQueryData(["blogs", updatedBlog.id], (oldBlog) => {
+                if(!oldBlog) return null;
+
+                return{...oldBlog, userLikes : updatedBlog.userLikes}
+              })
+
+              queryClient.invalidateQueries(["blogs"]);
                
             notificationDispatch({
                 type: 'SET_NOTIFICATION',
                 payload: { message:`👍🏻`, type: "success" }
             });
+
+            
+
         },
         onError: (error) => {
             console.error("Error al actualizar el blog", error);

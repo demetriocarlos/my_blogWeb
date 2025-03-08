@@ -15,6 +15,16 @@ const getBlogs = ()  => {
     })
 }
 
+const getBlogId = (id)  => {
+    return api.get(`${baseUrl}/${id}`)
+    .then(response => {
+        return response.data
+    })
+    .catch(error => {
+        console.error('Error al cargar el blog por id', error)
+    })
+}
+
 
 const create = (datos) => {
     return api.post( baseUrl,datos)
@@ -68,5 +78,5 @@ const comments = ({id,comment}) => {
     })
 }
 
-export default {getBlogs, create, update, eliminar,comments}
+export default {getBlogs, create, update, eliminar,comments, getBlogId}
 
